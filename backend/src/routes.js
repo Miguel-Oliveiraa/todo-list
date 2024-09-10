@@ -4,10 +4,10 @@ const TarefaController = require("./controllers/TarefaController");
 
 const routes = express.Router();
 
-routes.post("/membros", MembroController.store);
+routes.post("/membros", MembroController.cadastrar);
 
-routes.get("/tarefas", TarefaController.index);
+routes.get("/tarefas", TarefaController.buscar);
 routes.put("/tarefas/:id/finalizar", TarefaController.finalizar);
-routes.post("/membros/:membro_id/tarefas", TarefaController.store);
+routes.post("/membros/:membro_id/tarefas", TarefaController.criar);
 
 module.exports = routes;

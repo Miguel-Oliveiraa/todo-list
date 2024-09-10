@@ -1,8 +1,40 @@
 const Membro = require("../models/Membro");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 module.exports = {
+  async login(req, res) {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+      return res.status(400).json({ error: "Preencha todos os campos" });
+    }
+
+    const membro = await Membro.findOne({ where: { email } });
+
+    if (!membro) {
+      return res.status(404).json({ error: "Membro não encontrado" });
+    }
+
+    const senhaCorreta = await bcrypt.compare(senha, membro.senha);
+
+    if (!senhaCorreta) {
+      return res.status(401).json({ error: "Senha incorreta" });
+    }
+
+    const token = jwt.sign(
+      { id: membro.dataValues.id, email },
+      process.env.jwtSecret,
+      {
+        expiresIn: process.env.jwtExpiration,
+      }
+    );
+
+    return res.json({ token });
+  },
+
   async cadastrar(req, res) {
     const { email, nome, senha } = req.body;
     if (!email || !nome || !senha) {

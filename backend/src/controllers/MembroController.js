@@ -31,13 +31,16 @@ module.exports = {
 
     const senha_criptografada = await bcrypt.hash(senha, 10);
 
-    const membro = await Membro.create({
-      id: uuid,
-      email,
-      nome,
-      senha: senha_criptografada,
-    });
-
-    return res.json(membro);
+    try {
+      const membro = await Membro.create({
+        id: uuid,
+        email,
+        nome,
+        senha: senha_criptografada,
+      });
+      return res.json(membro);
+    } catch (error) {
+      return res.status(400).json({ error: "Erro ao cadastrar membro" });
+    }
   },
 };

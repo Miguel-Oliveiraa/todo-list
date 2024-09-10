@@ -27,7 +27,7 @@ module.exports = {
   },
 
   async criar(req, res) {
-    const { membro_id } = req.params;
+    const { usuario } = req;
     const { nome, descricao, prioridade } = req.body;
     const id = uuidv4();
 
@@ -35,7 +35,7 @@ module.exports = {
       return res.status(400).json({ error: "Preencha o campo de nome" });
     }
 
-    const membro = await Membro.findByPk(membro_id);
+    const membro = await Membro.findByPk(usuario.id);
 
     if (!membro) {
       return res.status(404).json({ error: "Membro não encontrado" });
@@ -57,11 +57,9 @@ module.exports = {
       prioridade !== "Média" &&
       prioridade !== "Alta"
     ) {
-      return res
-        .status(400)
-        .json({
-          error: `O campo 'prioridade' deve ser um dos seguintes valores: 'Baixa', 'Média', 'Alta'. O valor fornecido foi '${prioridade}'.`,
-        });
+      return res.status(400).json({
+        error: `O campo 'prioridade' deve ser um dos seguintes valores: 'Baixa', 'Média', 'Alta'. O valor fornecido foi '${prioridade}'.`,
+      });
     }
 
     try {
@@ -71,7 +69,7 @@ module.exports = {
         descricao,
         finalizada: 0,
         prioridade: !prioridade ? "Baixa" : prioridade,
-        membro_id,
+        membro_id: usuario.id,
       });
       return res.json(tarefa);
     } catch (error) {

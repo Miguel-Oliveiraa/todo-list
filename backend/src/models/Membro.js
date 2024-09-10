@@ -17,6 +17,10 @@ class Membro extends Model {
       }
     );
   }
+
+  static associate(models) {
+    this.hasMany(models.Tarefa, { foreignKey: "membro_id", as: "tarefas" });
+  }
 }
 
 module.exports = Membro;

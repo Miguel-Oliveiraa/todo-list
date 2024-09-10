@@ -1,9 +1,8 @@
 const express = require("express");
+const MembroController = require("./controllers/MembroController");
 
 const routes = express.Router();
 
-routes.get("/", (req, res) => {
-  return res.json({ message: "Hello World" });
-});
+routes.post("/membros", MembroController.store);
 
 module.exports = routes;

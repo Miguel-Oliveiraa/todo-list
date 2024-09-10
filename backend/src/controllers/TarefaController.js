@@ -3,7 +3,7 @@ const Membro = require("../models/Membro");
 const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
-  async index(req, res) {
+  async buscar(req, res) {
     const tarefas = await Tarefa.findAll();
 
     return res.json(tarefas);
@@ -15,7 +15,7 @@ module.exports = {
     const tarefa = await Tarefa.findByPk(id);
 
     if (!tarefa) {
-      return res.status(400).json({ error: "Tarefa não encontrada" });
+      return res.status(404).json({ error: "Tarefa não encontrada" });
     }
 
     try {
@@ -26,7 +26,7 @@ module.exports = {
     }
   },
 
-  async store(req, res) {
+  async criar(req, res) {
     const { membro_id } = req.params;
     const { nome, descricao, prioridade } = req.body;
     const id = uuidv4();
@@ -38,7 +38,7 @@ module.exports = {
     const membro = await Membro.findByPk(membro_id);
 
     if (!membro) {
-      return res.status(400).json({ error: "Membro não encontrado" });
+      return res.status(404).json({ error: "Membro não encontrado" });
     }
 
     if (nome.length < 5 || nome.length > 50) {
@@ -57,7 +57,11 @@ module.exports = {
       prioridade !== "Média" &&
       prioridade !== "Alta"
     ) {
-      return res.status(400).json({ error: "Prioridade inválida" });
+      return res
+        .status(400)
+        .json({
+          error: `O campo 'prioridade' deve ser um dos seguintes valores: 'Baixa', 'Média', 'Alta'. O valor fornecido foi '${prioridade}'.`,
+        });
     }
 
     try {

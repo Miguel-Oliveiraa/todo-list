@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
 
 module.exports = {
-  async store(req, res) {
+  async cadastrar(req, res) {
     const { email, nome, senha } = req.body;
     if (!email || !nome || !senha) {
       return res.status(400).json({ error: "Preencha todos os campos" });
@@ -24,7 +24,7 @@ module.exports = {
     const membroExistente = await Membro.findOne({ where: { email } });
 
     if (membroExistente) {
-      return res.status(400).json({ error: "Membro já cadastrado" });
+      return res.status(409).json({ error: "Email já cadastrado" });
     }
 
     const uuid = uuidv4();

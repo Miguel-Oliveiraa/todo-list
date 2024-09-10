@@ -5,8 +5,12 @@ const verificarAutenticacao = require("./middleware/authMiddleware");
 
 const routes = express.Router();
 
-routes.post("/membros", MembroController.cadastrar);
+routes.post("/cadastro", MembroController.cadastrar);
 routes.post("/login", MembroController.login);
+
+routes.get("/membros", verificarAutenticacao, MembroController.buscar);
+routes.delete("/membros", verificarAutenticacao, MembroController.deletar);
+routes.put("/membros", verificarAutenticacao, MembroController.atualizar);
 
 routes.get("/tarefas", verificarAutenticacao, TarefaController.buscar);
 routes.put(

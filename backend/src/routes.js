@@ -19,5 +19,7 @@ routes.put(
   TarefaController.finalizar
 );
 routes.post("/tarefas", verificarAutenticacao, TarefaController.criar);
+routes.put("/tarefas", verificarAutenticacao, TarefaController.atualizar);
+routes.delete("/tarefas/:id", verificarAutenticacao, TarefaController.deletar);
 
 module.exports = routes;

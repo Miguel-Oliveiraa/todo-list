@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button";
-import "./App.css";
+import Autenticacao from "./pages/Autenticacao";
 
 function App() {
   return (
     <>
-      <Button>Click me</Button>
+      <Autenticacao />
     </>
   );
 }

@@ -6,8 +6,10 @@ import Cadastro from "@/services/autenticacao/cadastro";
 import CardLogin from "./components/CardLogin";
 import CardCadastro from "./components/CardCadastro";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 function Autenticacao() {
+  const navigate = useNavigate();
   const [emailLogin, setEmailLogin] = useState("");
   const [senhaLogin, setSenhaLogin] = useState("");
   const [nomeCadastro, setNomeCadastro] = useState("");
@@ -23,7 +25,7 @@ function Autenticacao() {
         toast.error(response.error);
       } else {
         localStorage.setItem("authToken", response.token);
-        toast.success("Login realizado com sucesso");
+        navigate("/home");
       }
       // eslint-disable-next-line no-unused-vars
     } catch (error) {

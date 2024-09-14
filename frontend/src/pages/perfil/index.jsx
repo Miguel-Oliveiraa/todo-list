@@ -122,6 +122,13 @@ function PerfilScreen() {
             </button>
             <button
               onClick={() => {
+                navigate("/membros");
+              }}
+            >
+              <p className="text-2xl">membros</p>
+            </button>
+            <button
+              onClick={() => {
                 handleLogout();
               }}
             >

@@ -9,8 +9,14 @@ routes.post("/cadastro", MembroController.cadastrar);
 routes.post("/login", MembroController.login);
 
 routes.get("/membros", verificarAutenticacao, MembroController.buscar);
+routes.get("/membro", verificarAutenticacao, MembroController.index);
 routes.delete("/membros", verificarAutenticacao, MembroController.deletar);
 routes.put("/membros", verificarAutenticacao, MembroController.atualizar);
+routes.put(
+  "/membro/senha",
+  verificarAutenticacao,
+  MembroController.alterarSenha
+);
 
 routes.get("/tarefas", verificarAutenticacao, TarefaController.buscar);
 routes.put(

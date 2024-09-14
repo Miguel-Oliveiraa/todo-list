@@ -85,6 +85,19 @@ module.exports = {
     }
   },
 
+  async index(req, res) {
+    const { usuario } = req;
+    try {
+      const membro = await Membro.findByPk(usuario.id);
+      if (!membro) {
+        return res.status(404).json({ error: "Membro não encontrado" });
+      }
+      return res.json(membro);
+    } catch (error) {
+      return res.status(404).json({ error: "Membro não encontrado" });
+    }
+  },
+
   async deletar(req, res) {
     const { usuario } = req;
     const membro = await Membro.findByPk(usuario.id);
@@ -103,9 +116,9 @@ module.exports = {
 
   async atualizar(req, res) {
     const { usuario } = req;
-    const { email, nome, senha } = req.body;
+    const { email, nome } = req.body;
 
-    if (!email || !nome || !senha) {
+    if (!email || !nome) {
       return res.status(400).json({ error: "Preencha todos os campos" });
     }
 
@@ -115,10 +128,35 @@ module.exports = {
         .json({ error: "Nome precisa ter no mínimo 5 caracteres" });
     }
 
-    if (senha.length < 3) {
+    const membro = await Membro.findByPk(usuario.id);
+
+    if (!membro) {
+      return res.status(404).json({ error: "Membro não encontrado" });
+    }
+
+    try {
+      await membro.update({
+        email,
+        nome,
+      });
+      return res.json({ message: "Membro atualizado com sucesso" });
+    } catch (error) {
+      return res.status(400).json({ error: "Erro ao atualizar membro" });
+    }
+  },
+
+  async alterarSenha(req, res) {
+    const { usuario } = req;
+    const { senha, novaSenha } = req.body;
+
+    if (!senha || !novaSenha) {
+      return res.status(400).json({ error: "Preencha todos os campos" });
+    }
+
+    if (novaSenha.length < 3) {
       return res
         .status(400)
-        .json({ error: "Senha precisa ter no mínimo 3 caracteres" });
+        .json({ error: "Nova senha precisa ter no mínimo 3 caracteres" });
     }
 
     const membro = await Membro.findByPk(usuario.id);
@@ -127,17 +165,21 @@ module.exports = {
       return res.status(404).json({ error: "Membro não encontrado" });
     }
 
-    const senha_criptografada = await bcrypt.hash(senha, 10);
+    const senhaCorreta = await bcrypt.compare(senha, membro.senha);
+
+    if (!senhaCorreta) {
+      return res.status(401).json({ error: "Senha incorreta" });
+    }
+
+    const senha_criptografada = await bcrypt.hash(novaSenha, 10);
 
     try {
       await membro.update({
-        email,
-        nome,
         senha: senha_criptografada,
       });
-      return res.json({ message: "Membro atualizado com sucesso" });
+      return res.json({ message: "Senha alterada com sucesso" });
     } catch (error) {
-      return res.status(400).json({ error: "Erro ao atualizar membro" });
+      return res.status(400).json({ error: "Erro ao alterar senha" });
     }
   },
 };

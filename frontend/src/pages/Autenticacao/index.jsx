@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
 import Login from "@/services/autenticacao/login";
@@ -16,6 +16,13 @@ function Autenticacao() {
   const [emailCadastro, setEmailCadastro] = useState("");
   const [senhaCadastro, setSenhaCadastro] = useState("");
   const [confirmarSenhaCadastro, setConfirmarSenhaCadastro] = useState("");
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      navigate("/home");
+    }
+  }, []);
 
   const handleLogin = async () => {
     try {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
 import Login from "@/services/autenticacao/login";
@@ -6,14 +6,23 @@ import Cadastro from "@/services/autenticacao/cadastro";
 import CardLogin from "./components/CardLogin";
 import CardCadastro from "./components/CardCadastro";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 function Autenticacao() {
+  const navigate = useNavigate();
   const [emailLogin, setEmailLogin] = useState("");
   const [senhaLogin, setSenhaLogin] = useState("");
   const [nomeCadastro, setNomeCadastro] = useState("");
   const [emailCadastro, setEmailCadastro] = useState("");
   const [senhaCadastro, setSenhaCadastro] = useState("");
   const [confirmarSenhaCadastro, setConfirmarSenhaCadastro] = useState("");
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      navigate("/home");
+    }
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -23,7 +32,8 @@ function Autenticacao() {
         toast.error(response.error);
       } else {
         localStorage.setItem("authToken", response.token);
-        toast.success("Login realizado com sucesso");
+        localStorage.setItem("membroId", response.id);
+        navigate("/home");
       }
       // eslint-disable-next-line no-unused-vars
     } catch (error) {

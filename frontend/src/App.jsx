@@ -1,9 +1,9 @@
-import Autenticacao from "./pages/Autenticacao";
+import Rotas from "./routes";
 
 function App() {
   return (
     <>
-      <Autenticacao />
+      <Rotas />
     </>
   );
 }

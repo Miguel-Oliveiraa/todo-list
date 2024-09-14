@@ -19,8 +19,15 @@ module.exports = {
       return res.status(404).json({ error: "Tarefa não encontrada" });
     }
 
+    const data = new Date();
+
+    const data_horario_brasilia = new Date(data.getTime() - 3 * 60 * 60 * 1000);
+
     try {
-      await tarefa.update({ finalizada: 1 });
+      await tarefa.update({
+        finalizada: 1,
+        data_de_termino: data_horario_brasilia,
+      });
       return res.json(tarefa);
     } catch (error) {
       return res.status(400).json({ error: "Erro ao finalizar tarefa" });
@@ -83,6 +90,12 @@ module.exports = {
     const { id, nome, descricao, prioridade } = req.body;
 
     const tarefa = await Tarefa.findByPk(id);
+
+    if (tarefa.finalizada) {
+      return res
+        .status(400)
+        .json({ error: "Proibido editar tarefa finalizada" });
+    }
 
     if (!tarefa) {
       return res.status(404).json({ error: "Tarefa não encontrada" });

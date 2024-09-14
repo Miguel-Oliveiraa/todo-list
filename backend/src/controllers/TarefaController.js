@@ -91,6 +91,12 @@ module.exports = {
 
     const tarefa = await Tarefa.findByPk(id);
 
+    if (tarefa.finalizada) {
+      return res
+        .status(400)
+        .json({ error: "Proibido editar tarefa finalizada" });
+    }
+
     if (!tarefa) {
       return res.status(404).json({ error: "Tarefa não encontrada" });
     }

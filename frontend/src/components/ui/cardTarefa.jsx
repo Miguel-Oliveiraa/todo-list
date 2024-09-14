@@ -124,6 +124,7 @@ const CardTarefa = ({
                           prioridade
                         );
                       }}
+                      disabled={finalizadaState}
                     >
                       Editar
                     </Button>

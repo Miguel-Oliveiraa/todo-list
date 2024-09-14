@@ -1,4 +1,4 @@
-# Projeto [Nome do Projeto]
+# Projeto Todo List
 
 Bem-vindo ao Todo List! Este é um projeto web para gerenciar tarefas. Abaixo, você encontrará instruções sobre como configurar e rodar o projeto em sua máquina local.
 

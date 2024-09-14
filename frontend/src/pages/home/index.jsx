@@ -83,7 +83,6 @@ function HomeScreen() {
         <header className="flex justify-between">
           <p className="text-6xl font-bold">Tarefas</p>
           <div className="flex gap-8 h-fit">
-            <p className="text-2xl">membros</p>
             <p className="text-2xl">perfil</p>
             <button
               onClick={() => {

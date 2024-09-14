@@ -25,6 +25,7 @@ function Autenticacao() {
         toast.error(response.error);
       } else {
         localStorage.setItem("authToken", response.token);
+        localStorage.setItem("membroId", response.id);
         navigate("/home");
       }
       // eslint-disable-next-line no-unused-vars

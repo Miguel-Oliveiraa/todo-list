@@ -11,33 +11,20 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { X } from "react-feather";
-import criarTarefa from "@/services/tarefas/criarTarefa";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
+import editarTarefa from "@/services/tarefas/editarTarefa";
 
-const ModalCriarTarefa = ({
-  handleModal,
-  prioridadeInicial,
-  setPrioridadeInicial,
-}) => {
-  const [nome, setNome] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [prioridade, setPrioridade] = useState("");
+const ModalEditarTarefa = ({ handleModal, dados }) => {
+  const [nome, setNome] = useState(dados.nomeInicial);
+  const [descricao, setDescricao] = useState(dados.descricaoInicial);
+  const [prioridade, setPrioridade] = useState(dados.prioridadeInicial);
 
-  useEffect(() => {
-    if (prioridadeInicial) {
-      setPrioridade(prioridadeInicial);
-    }
-  }, []);
-
-  const handleCriarTarefa = async () => {
+  const handleEditarTarefas = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      // eslint-disable-next-line no-unused-vars
-      const response = await criarTarefa(token, nome, descricao, prioridade);
-      // eslint-disable-next-line no-console
-      setPrioridadeInicial("");
-      handleModal();
+      await editarTarefa(token, dados.id, nome, descricao, prioridade);
+      handleModal("", "", "", "");
     } catch (error) {
       // eslint-disable-next-line no-console
       toast.error(error.error);
@@ -49,13 +36,12 @@ const ModalCriarTarefa = ({
       <div className="flex bg-white rounded px-24 pt-20 pb-16">
         <div className="w-[750px]">
           <div className="flex justify-between items-center">
-            <p className="text-5xl font-bold">Criar Tarefa</p>
+            <p className="text-5xl font-bold">Editar Tarefa</p>
             <Button
               variant="primary"
               className="mt-4"
               onClick={() => {
-                setPrioridadeInicial("");
-                handleModal();
+                handleModal("", "", "", "");
               }}
             >
               <X className="w-10 h-10 text-black" />
@@ -91,10 +77,10 @@ const ModalCriarTarefa = ({
           <Button
             className="mt-4"
             onClick={() => {
-              handleCriarTarefa();
+              handleEditarTarefas();
             }}
           >
-            Criar
+            Editar
           </Button>
         </div>
       </div>
@@ -103,4 +89,4 @@ const ModalCriarTarefa = ({
   );
 };
 
-export default ModalCriarTarefa;
+export default ModalEditarTarefa;

@@ -5,7 +5,9 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import dadosPerfil from "@/services/perfil/dadosPerfil";
 import { Input } from "@/components/ui/input";
+import PasswordInput from "@/components/ui/PasswordInput";
 import atualizarPerfil from "@/services/perfil/atualizarPerfil";
+import { Label } from "@/components/ui/label";
 import deletarPerfil from "@/services/perfil/deletarPerfil";
 import {
   AlertDialog,
@@ -18,12 +20,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import alterarSenha from "@/services/perfil/alterarSenha";
 
 function PerfilScreen() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [nome, setNome] = useState("");
   const [modoTela, setModoTela] = useState("visualizacao");
+  const [senhaAtual, setSenhaAtual] = useState("");
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confimarSenha, setConfimarSenha] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -82,6 +88,25 @@ function PerfilScreen() {
     }
   };
 
+  const handleAlterarSenha = () => {
+    setModoTela("alterarSenha");
+  };
+
+  const handleAtualizarSenha = async () => {
+    const token = localStorage.getItem("authToken");
+    if (novaSenha == confimarSenha) {
+      try {
+        const response = await alterarSenha(token, senhaAtual, novaSenha);
+        toast.success(response.message);
+        setModoTela("visualizacao");
+      } catch (error) {
+        toast.error(error.error);
+      }
+    } else {
+      toast.error("As senhas não coincidem");
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col pt-16 mx-auto w-[87%] h-screen">
@@ -107,13 +132,17 @@ function PerfilScreen() {
         <body className="mt-8 h-full w-1/3">
           {modoTela && modoTela === "visualizacao" ? (
             <>
-              <div className="flex gap-2">
-                <p className="font-bold text-2xl">Nome: </p>
-                <p className="text-2xl">{nome}</p>
+              <div className="flex flex-col">
+                <Label htmlFor="nome-perfil">Nome</Label>
+                <p id="nome-perfil" className="text-2xl">
+                  {nome}
+                </p>
               </div>
-              <div className="flex gap-2">
-                <p className="font-bold text-2xl">Email: </p>
-                <p className="text-2xl">{email}</p>
+              <div className="flex flex-col mt-2">
+                <Label htmlFor="email-perfil">Email</Label>
+                <p id="email-perfil" className="text-2xl">
+                  {email}
+                </p>
               </div>
               <div className="flex gap-4 mt-6">
                 <Button
@@ -122,6 +151,14 @@ function PerfilScreen() {
                   }}
                 >
                   Editar
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    handleAlterarSenha();
+                  }}
+                >
+                  AlterarSenha
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger>
@@ -158,13 +195,18 @@ function PerfilScreen() {
           )}
           {modoTela && modoTela === "edicao" ? (
             <>
-              <div className="flex gap-2">
-                <p className="font-bold text-2xl">Nome: </p>
-                <Input value={nome} onChange={(e) => setNome(e.target.value)} />
-              </div>
-              <div className="flex gap-2 mt-2">
-                <p className="font-bold text-2xl">Email: </p>
+              <div>
+                <Label htmlFor="nome">Nome</Label>
                 <Input
+                  id="nome"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -187,6 +229,53 @@ function PerfilScreen() {
                 </Button>
               </div>
             </>
+          ) : (
+            <></>
+          )}
+          {modoTela && modoTela === "alterarSenha" ? (
+            <div className="flex flex-col">
+              <div>
+                <Label htmlFor="senha-atual">Senha atual</Label>
+                <PasswordInput
+                  id="senha-atual"
+                  value={senhaAtual}
+                  onChange={(e) => setSenhaAtual(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <Label htmlFor="nova-senha">Nova senha</Label>
+                <PasswordInput
+                  id="nova-senha"
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <Label htmlFor="confirmar-senha">Confirmar senha</Label>
+                <PasswordInput
+                  id="confirmar-senha"
+                  value={confimarSenha}
+                  onChange={(e) => setConfimarSenha(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-4 mt-6">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    handleCancelar();
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleAtualizarSenha();
+                  }}
+                >
+                  Alterar Senha
+                </Button>
+              </div>
+            </div>
           ) : (
             <></>
           )}

@@ -7,8 +7,10 @@ import exibirTarefas from "@/services/tarefas/exibirTarefas";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import ModalEditarTarefa from "@/components/ui/modalEditarTarefa";
+import { useNavigate } from "react-router-dom";
 
 function HomeScreen() {
+  const navigate = useNavigate();
   const [modalCriarTarefa, setModalCriarTarefa] = useState(false);
   const [modalEditarTarefa, setModalEditarTarefa] = useState(false);
   const [dadosEditarTarefa, setDadosEditarTarefa] = useState({});
@@ -21,9 +23,13 @@ function HomeScreen() {
   const [finalizar, setFinalizar] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      return navigate("/");
+    }
+
     setDeletar(false);
     setFinalizar(false);
-    const token = localStorage.getItem("authToken");
     const fetchData = async () => {
       try {
         const response = await exibirTarefas(token);
@@ -65,6 +71,12 @@ function HomeScreen() {
     setModalEditarTarefa(!modalEditarTarefa);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("membroId");
+    window.location.href = "/";
+  };
+
   return (
     <>
       <div className="flex flex-col pt-16 mx-auto w-[87%] h-screen">
@@ -73,7 +85,13 @@ function HomeScreen() {
           <div className="flex gap-8 h-fit">
             <p className="text-2xl">membros</p>
             <p className="text-2xl">perfil</p>
-            <p className="text-2xl bg-red-200 rounded px-1">logout</p>
+            <button
+              onClick={() => {
+                handleLogout();
+              }}
+            >
+              <p className="text-2xl bg-red-200 rounded px-1">logout</p>
+            </button>
           </div>
         </header>
         <body className="mt-8 h-full">

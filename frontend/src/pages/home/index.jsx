@@ -85,6 +85,13 @@ function HomeScreen() {
           <div className="flex gap-8 h-fit">
             <button
               onClick={() => {
+                navigate("/membros");
+              }}
+            >
+              <p className="text-2xl">membros</p>
+            </button>
+            <button
+              onClick={() => {
                 navigate("/perfil");
               }}
             >

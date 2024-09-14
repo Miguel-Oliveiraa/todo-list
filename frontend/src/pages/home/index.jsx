@@ -11,10 +11,12 @@ import { useNavigate } from "react-router-dom";
 
 function HomeScreen() {
   const navigate = useNavigate();
+  const [status, setStatus] = useState("Todas");
   const [modalCriarTarefa, setModalCriarTarefa] = useState(false);
   const [modalEditarTarefa, setModalEditarTarefa] = useState(false);
   const [dadosEditarTarefa, setDadosEditarTarefa] = useState({});
   const [tarefas, setTarefas] = useState([]);
+  const [tarefasFiltradas, setTarefasFiltradas] = useState([]);
   const [baixaPrioridade, setBaixaPrioridade] = useState([]);
   const [mediaPrioridade, setMediaPrioridade] = useState([]);
   const [altaPrioridade, setAltaPrioridade] = useState([]);
@@ -39,18 +41,31 @@ function HomeScreen() {
       }
     };
     fetchData();
-  }, [modalCriarTarefa, modalEditarTarefa, deletar, finalizar]);
+    if (status === "Todas") {
+      setTarefasFiltradas(tarefas);
+    } else if (status === "Pendentes") {
+      setTarefasFiltradas(
+        tarefas.filter((tarefa) => tarefa.finalizada === false)
+      );
+    } else {
+      setTarefasFiltradas(
+        tarefas.filter((tarefa) => tarefa.finalizada === true)
+      );
+    }
+  }, [modalCriarTarefa, modalEditarTarefa, deletar, finalizar, status]);
 
   useEffect(() => {
     setBaixaPrioridade(
-      tarefas.filter((tarefa) => tarefa.prioridade === "Baixa")
+      tarefasFiltradas.filter((tarefa) => tarefa.prioridade === "Baixa")
     );
     setMediaPrioridade(
-      tarefas.filter((tarefa) => tarefa.prioridade === "Média")
+      tarefasFiltradas.filter((tarefa) => tarefa.prioridade === "Média")
     );
 
-    setAltaPrioridade(tarefas.filter((tarefa) => tarefa.prioridade === "Alta"));
-  }, [tarefas]);
+    setAltaPrioridade(
+      tarefasFiltradas.filter((tarefa) => tarefa.prioridade === "Alta")
+    );
+  }, [tarefasFiltradas]);
 
   const handleModalCriarTarefa = () => {
     setModalCriarTarefa(!modalCriarTarefa);
@@ -109,15 +124,51 @@ function HomeScreen() {
         <body className="mt-8 h-full">
           <div className="flex items-end justify-between border-b">
             <div className="flex h-fit">
-              <p className="text-3xl font-bold pr-3 border-b pb-2 border-black">
-                Todas
-              </p>
-              <p className="text-3xl font-bold px-3 border-b pb-2 border-black">
-                Pendentes
-              </p>
-              <p className="text-3xl font-bold px-3 border-b pb-2 border-black">
-                Finalizadas
-              </p>
+              <button
+                onClick={() => {
+                  setStatus("Todas");
+                }}
+              >
+                <p
+                  className={
+                    status == "Todas"
+                      ? "text-3xl font-bold pr-3 border-b pb-2 border-black"
+                      : "text-3xl font-bold pr-3 border-b pb-2 text-gray-500"
+                  }
+                >
+                  Todas
+                </p>
+              </button>
+              <button
+                onClick={() => {
+                  setStatus("Pendentes");
+                }}
+              >
+                <p
+                  className={
+                    status == "Pendentes"
+                      ? "text-3xl font-bold pr-3 border-b pb-2 border-black"
+                      : "text-3xl font-bold pr-3 border-b pb-2 text-gray-500"
+                  }
+                >
+                  Pendentes
+                </p>
+              </button>
+              <button
+                onClick={() => {
+                  setStatus("Finalizadas");
+                }}
+              >
+                <p
+                  className={
+                    status == "Finalizadas"
+                      ? "text-3xl font-bold pr-3 border-b pb-2 border-black"
+                      : "text-3xl font-bold pr-3 border-b pb-2 text-gray-500"
+                  }
+                >
+                  Finalizadas
+                </p>
+              </button>
             </div>
             <Button className="mb-2" onClick={handleModalCriarTarefa}>
               Criar

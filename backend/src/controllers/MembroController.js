@@ -32,7 +32,7 @@ module.exports = {
       }
     );
 
-    return res.json({ token });
+    return res.json({ token, id: membro.id });
   },
 
   async cadastrar(req, res) {

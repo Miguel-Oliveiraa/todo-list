@@ -113,6 +113,43 @@
         }
       }
     },
+    "/membro": {
+      "get": {
+        "tags": ["Membros"],
+        "summary": "Buscar um unico membro",
+        "description": "Busca o membro que fez a request (através do JWT). Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dados do membro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Membro"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado. Verifique se o token JWT está presente e é válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/membros": {
       "get": {
         "tags": ["Membros"],
@@ -672,7 +709,7 @@
         "properties": {
           "error": {
             "type": "string",
-            "example": "Senha incorreta"
+            "example": "Token invalido"
           }
         },
         "required": ["error"]
@@ -736,16 +773,6 @@
             "type": "string",
             "example": "Pendente"
           },
-          "dataCriacao": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-09-15T10:00:00Z"
-          },
-          "dataConclusao": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-09-20T10:00:00Z"
-          },
           "idMembro": {
             "type": "string",
             "example": "a0eeb9f4-31b8-4a4d-8d7c-6a57860c2e27"
@@ -773,12 +800,7 @@
           },
           "status": {
             "type": "string",
-            "example": "Concluída"
-          },
-          "dataConclusao": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-09-22T10:00:00Z"
+            "example": "Finalizada"
           }
         }
       }

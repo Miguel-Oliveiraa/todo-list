@@ -41,9 +41,9 @@ function HomeScreen() {
       }
     };
     fetchData();
-    if (status === "Todas") {
+    if (status == "Todas") {
       setTarefasFiltradas(tarefas);
-    } else if (status === "Pendentes") {
+    } else if (status == "Pendentes") {
       setTarefasFiltradas(
         tarefas.filter((tarefa) => tarefa.finalizada === false)
       );
@@ -52,7 +52,15 @@ function HomeScreen() {
         tarefas.filter((tarefa) => tarefa.finalizada === true)
       );
     }
-  }, [modalCriarTarefa, modalEditarTarefa, deletar, finalizar, status]);
+  }, [
+    modalCriarTarefa,
+    modalEditarTarefa,
+    deletar,
+    finalizar,
+    status,
+    navigate,
+    tarefas,
+  ]);
 
   useEffect(() => {
     setBaixaPrioridade(
@@ -61,7 +69,6 @@ function HomeScreen() {
     setMediaPrioridade(
       tarefasFiltradas.filter((tarefa) => tarefa.prioridade === "Média")
     );
-
     setAltaPrioridade(
       tarefasFiltradas.filter((tarefa) => tarefa.prioridade === "Alta")
     );

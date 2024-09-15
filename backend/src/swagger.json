@@ -1,0 +1,787 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Documentação da API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/cadastro": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Cadastrar um novo membro",
+        "description": "Cadastra um novo membro no sistema.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cadastro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Membro cadastrado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membro"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email já cadastrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error409"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Login de um membro",
+        "description": "Realiza o login de um membro e retorna um token JWT.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Preencha todos os campos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Senha incorreta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Membro não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/membros": {
+      "get": {
+        "tags": ["Membros"],
+        "summary": "Buscar todos os membros",
+        "description": "Busca todos os membros registrados. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de membros.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Membro"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado. Verifique se o token JWT está presente e é válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Membros"],
+        "summary": "Deletar um membro",
+        "description": "Remove o membro autenticado. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membro deletado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Membro não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao deletar membro.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Membros"],
+        "summary": "Atualizar um membro",
+        "description": "Atualiza as informações do membro autenticado. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarMembro"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Membro atualizado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Membro não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/membro/senha": {
+      "put": {
+        "tags": ["Membros"],
+        "summary": "Alterar senha de um membro",
+        "description": "Altera a senha do membro autenticado. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlterarSenha"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Senha alterada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Senha incorreta.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Membro não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tarefas": {
+      "post": {
+        "tags": ["Tarefas"],
+        "summary": "Criar uma nova tarefa",
+        "description": "Cria uma nova tarefa para o membro autenticado. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarTarefa"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarefa criada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tarefa"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Membro não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Tarefas"],
+        "summary": "Listar todas as tarefas",
+        "description": "Lista todas as tarefas do membro autenticado. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tarefas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tarefa"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado. Verifique se o token JWT está presente e é válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tarefas"],
+        "summary": "Atualizar uma tarefa",
+        "description": "Atualiza uma tarefa específica pelo ID. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarTarefa"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarefa atualizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tarefa"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarefa não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tarefas/{id}": {
+      "get": {
+        "tags": ["Tarefas"],
+        "summary": "Obter uma tarefa específica",
+        "description": "Obtém uma tarefa específica pelo ID. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "a0eeb9f4-31b8-4a4d-8d7c-6a57860c2e27"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarefa encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tarefa"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarefa não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tarefas"],
+        "summary": "Deletar uma tarefa",
+        "description": "Deleta uma tarefa específica pelo ID. Necessário token JWT no cabeçalho da requisição como Bearer Token.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "a0eeb9f4-31b8-4a4d-8d7c-6a57860c2e27"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarefa deletada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao deletar tarefa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarefa não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sem permissão para deletar tarefa.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error403"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cadastro": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "teste@email.com"
+          },
+          "nome": {
+            "type": "string",
+            "example": "Novo Usuario"
+          },
+          "senha": {
+            "type": "string",
+            "example": "teste"
+          }
+        },
+        "required": ["email", "nome", "senha"]
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "mgo@cin.ufpe.br"
+          },
+          "senha": {
+            "type": "string",
+            "example": "senha"
+          }
+        },
+        "required": ["email", "senha"]
+      },
+      "AtualizarMembro": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "teste@email.com"
+          },
+          "nome": {
+            "type": "string",
+            "example": "Novo Usuario Modificado"
+          }
+        },
+        "required": ["email", "nome"]
+      },
+      "AlterarSenha": {
+        "type": "object",
+        "properties": {
+          "senha": {
+            "type": "string",
+            "example": "testando-cryptografia"
+          },
+          "novaSenha": {
+            "type": "string",
+            "example": "haha"
+          }
+        },
+        "required": ["senha", "novaSenha"]
+      },
+      "Membro": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "a0eeb9f4-31b8-4a4d-8d7c-6a57860c2e27"
+          },
+          "email": {
+            "type": "string",
+            "example": "teste@email.com"
+          },
+          "nome": {
+            "type": "string",
+            "example": "Novo Usuario"
+          },
+          "senha": {
+            "type": "string",
+            "example": "senha"
+          }
+        },
+        "required": ["id", "email", "nome", "senha"]
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk3ODg4NWFmLTA2M2UtNDU4OS1iMzBhLTgyYmU1NWFkNjUxOCIsImVtYWlsIjoidGVzdGVAZW1haWwuY29tIiwiaWF0IjoxNzI2MjYwMzY2LCJleHAiOjE3Mjg4NTIzNjZ9.p6YzNlY3o-Z_alsuo3V2JCHVN13RM28TFVppqQXDxQI"
+          },
+          "id": {
+            "type": "string",
+            "example": "a0eeb9f4-31b8-4a4d-8d7c-6a57860c2e27"
+          }
+        },
+        "required": ["token", "id"]
+      },
+      "Error400": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Preencha todos os campos"
+          }
+        },
+        "required": ["error"]
+      },
+      "Error401": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Senha incorreta"
+          }
+        },
+        "required": ["error"]
+      },
+      "Error403": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Permissão negada"
+          }
+        },
+        "required": ["error"]
+      },
+      "Error404": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Membro não encontrado"
+          }
+        },
+        "required": ["error"]
+      },
+      "Error409": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Email já cadastrado"
+          }
+        },
+        "required": ["error"]
+      },
+      "MessageResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Membro deletado com sucesso"
+          }
+        },
+        "required": ["message"]
+      },
+      "Tarefa": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "a0eeb9f4-31b8-4a4d-8d7c-6a57860c2e27"
+          },
+          "titulo": {
+            "type": "string",
+            "example": "Tarefa Importante"
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Descrição detalhada da tarefa"
+          },
+          "status": {
+            "type": "string",
+            "example": "Pendente"
+          },
+          "dataCriacao": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-09-15T10:00:00Z"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-09-20T10:00:00Z"
+          },
+          "idMembro": {
+            "type": "string",
+            "example": "a0eeb9f4-31b8-4a4d-8d7c-6a57860c2e27"
+          }
+        },
+        "required": [
+          "id",
+          "titulo",
+          "descricao",
+          "status",
+          "dataCriacao",
+          "idMembro"
+        ]
+      },
+      "AtualizarTarefa": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "example": "Tarefa Atualizada"
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Descrição atualizada da tarefa"
+          },
+          "status": {
+            "type": "string",
+            "example": "Concluída"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-09-22T10:00:00Z"
+          }
+        }
+      }
+    }
+  }
+}
